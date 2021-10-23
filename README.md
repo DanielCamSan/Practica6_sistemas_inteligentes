@@ -19,6 +19,8 @@
 ## 5. Bibliography
 
 
-➡️  Heuristic: [Mississippi University: Ole Miss][heuristic]
+➡️  HeapQ: [Docs Python][heapq]
+➡️  CopyLists: [Docs Python][copy]
 
-[heuristic]: https://john.cs.olemiss.edu/~dwilkins/CSCI531/fall12/slides/AI_09_games.pdf
+[heapq]: https://docs.python.org/3/library/heapq.html
+[copy]: https://docs.python.org/3/library/copy.html?highlight=copy#module-copy
