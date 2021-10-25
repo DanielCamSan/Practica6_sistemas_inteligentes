@@ -55,11 +55,11 @@ def backTrack(list_Nodes,weight,list_dominios):
     node_to_assign_value=most_Constrained_Value(list_Nodes) #Escoger variable no asignada
     values=change_Dominio(node_to_assign_value,least_Contrained_Value(node_to_assign_value,node_to_assign_value.dominio)) #ordenar el dominio de la variable
     for v in values.dominio:
-        if verify_restrictions(node_to_assign_value,v)==0 :#//Invalido
+        if verify_restrictions(node_to_assign_value,v)==0 :# Es Invalido no cumple las resctricciones
             continue
-    node_to_assign_value=forward_checking(node_to_assign_value,v)
-    list_Nodes=update_list_Nodes(node_to_assign_value,list_Nodes)
-    backTrack(list_Nodes,weight,list_dominios)
+    node_to_assign_value=forward_checking(node_to_assign_value,v)  #Actualizo su dominio
+    list_Nodes=update_list_Nodes(node_to_assign_value,list_Nodes) #Actualizo la lista de nodos
+    backTrack(list_Nodes,weight,list_dominios)  #llamda recursiva
 
 
 
