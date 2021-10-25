@@ -7,14 +7,15 @@ class Node:
         self.conflict_List = []
         self.neighbours=[]
         
+def change_Dominio(node,value):
+    node.dominio.append(value)
+    return node
 
 def forward_checking(node, value):
     node.dominio.append(value)
     for neighbour in node.neighbours:
         neighbour.dominio.remove(value)
     return node
-
-
 
 
 def asignation_complete(list_Nodes):
@@ -29,6 +30,7 @@ def most_Constrained_Value(list_Nodes):
         heapq.heappush(ordered_variables,(len(node.dominio),node))    
     return heapq.heappop(ordered_variables)[1]
 
+#REVISAR
 def least_Contrained_Value(node,list_Nodes):
     allconsistentvalues= []
     for value in node.dominio:
@@ -41,19 +43,23 @@ def least_Contrained_Value(node,list_Nodes):
         list_Nodes=temp_list_Nodes
     return allconsistentvalues[0]
 
+def verify_restrictions(node,value):
+    print(0)
+def update_list_Nodes(node, list_Nodes):
+    print("")
+
+
 def backTrack(list_Nodes,weight,list_dominios):
     if asignation_complete(list_Nodes): #todos los nodos estan asignados
         return list_Nodes
     node_to_assign_value=most_Constrained_Value(list_Nodes) #Escoger variable no asignada
-    node_to_assign_value=change_Dominio(node_to_assign_value,least_Contrained_Value(node_to_assign_value,list_dominios))
-    foreach v in dominios
-    if(asginacion_es_correcta(node_to_assign_value,v)==0)//Invalido
-        continue
-    node_to_assign_value=arcConsitency_Back_jump(node_to_assign_value,v)
-    jump(xe.conflict.pop())
-    list_Nodes.upgrade(node_to_assign_value)
-    Backtrack(x,1,dominios)
-
+    values=change_Dominio(node_to_assign_value,least_Contrained_Value(node_to_assign_value,node_to_assign_value.dominio)) #ordenar el dominio de la variable
+    for v in values.dominio:
+        if verify_restrictions(node_to_assign_value,v)==0 :#//Invalido
+            continue
+    node_to_assign_value=forward_checking(node_to_assign_value,v)
+    list_Nodes=update_list_Nodes(node_to_assign_value,list_Nodes)
+    backTrack(list_Nodes,weight,list_dominios)
 
 
 
