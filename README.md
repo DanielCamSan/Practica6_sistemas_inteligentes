@@ -22,6 +22,8 @@ For solving the problem i define:
         • The speakers give the day and the hour of his preference to do the conference
         • Two international speakers cant be assigned in the same schedule
         • The schedules can be withous a speaker, this depends in the quantity of speakers
+Then after do all the definitions we have to implement the bactrack algorithm, i start coding that in main.py with the basic algorithm and coding the set of definitions.
+I start defining the classes (it can see it in /images/Class_diagram), the nodes will be the schedules and the domain will be the speakers. Each node can have a set of speakers, 
 ## 3. Experiments & Results
 
 ## 4. Conclusions
@@ -34,6 +36,9 @@ For solving the problem i define:
 
 ➡️  HeapQ: [Docs Python][heapq]
 ➡️  CopyLists: [Docs Python][copy]
+➡️  HeapQ_Objects: [StackOverflow][lessthan]
+
 
 [heapq]: https://docs.python.org/3/library/heapq.html
 [copy]: https://docs.python.org/3/library/copy.html?highlight=copy#module-copy
+[lessthan]: https://stackoverflow.com/questions/49277168/issue-using-heapq-in-python-for-a-priority-list
