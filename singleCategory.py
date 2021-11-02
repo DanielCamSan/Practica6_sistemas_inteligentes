@@ -31,43 +31,62 @@ class Speaker:
         self.category = category
         self.day=day
         self.hour=hour
+    def __lt__(ob1, ob2):
+            return False
         
 def change_Dominio(node,value):
     node.dominio=value
     return node
 
-def forward_checking(node, value):
-    node.value.append(value)
-    node.dominio.remove(value)
-    for neighbour in node.neighbours:
-        if value in neighbour.dominio and value!= neighbour.value:
-            neighbour.dominio.remove(value)
+
+def compare_2_speakers(speaker,value):
+    return speaker.name==value.name and speaker.international==value.international and  speaker.category==value.category and  speaker.day== value.day and speaker.hour== value.hour  
+
+def forward_checking(node, value,list_dominios):
+    node.value=value
+    nodes_to_delete=[]
+    new_Dominio=copy.deepcopy(node.dominio)
+    for speaker in new_Dominio:
+        if not compare_2_speakers(speaker,value):
+            nodes_to_delete.append(speaker)
+    
+    for i in range(len(nodes_to_delete)):
+        new_Dominio.remove(nodes_to_delete[i])
+    node.dominio=new_Dominio
+    for neighbour in node.neighbours:            
+        for speak in neighbour.dominio:
+            if compare_2_speakers(value,speak):
+                neighbour.dominio.remove(speak)
+                break    
+    for speak in list_dominios:
+        if compare_2_speakers(speak,value):
+            list_dominios.remove(speak)
     return node
 
 
 def asignation_complete(list_Nodes,list_dominios):
-    ans=True
+    
     if len(list_dominios)==0:
         return True
     for node in list_Nodes:
-       if (node.value)!=None:
-           ans= ans or False
-           break
-    return ans
+       if node.value==None:
+           return False
+        
+    
 
 def most_Constrained_Value(list_Nodes):
     ordered_variables=[]
     for node in list_Nodes: #por cada variable sin asginaar
-        if len(node.value)==0:
-            heapq.heappush(ordered_variables,node)    
-    return heapq.heappop(ordered_variables)
+        if node.value==None:
+            heapq.heappush(ordered_variables,(len(node.dominio),node))    
+    return heapq.heappop(ordered_variables)[1]
 
 #REVISAR
 def least_Contrained_Value(node):
     allconsistentvalues= []
-    for value in node.dominio:
+    for value in node.dominio: #para cada speaker
         temp_Node=copy.deepcopy(node)
-        forward_checking(temp_Node,value)
+        forward_checking(temp_Node,value,copy.deepcopy(temp_Node.dominio))
         consistent_values=0
         for neighbour in temp_Node.neighbours:
             consistent_values+=len(neighbour.dominio)   
@@ -78,18 +97,19 @@ def least_Contrained_Value(node):
     return newall
 
 def verify_restrictions(node,value):   
+    if node.category!=value.category: #Un speaker solo puede dar charlas de su categoria
+        return 0
+    if node.day!= value.day: #Un speaker solo puede dar su charla el dia de su preferencia
+        return 0
+    if node.hour!= value.hour: #Un speaker solo puede dar su charla a la hora de su preferencia
+        return 0
     for neighbour in node.neighbours:
         if neighbour.value!=None:
-            if value in neighbour.value: #Un spekaer no puede tener 2 charlas seguidas
+            if value == neighbour.value: #Un spekaer no puede tener 2 charlas seguidas o en el mismo horario
                 return 0
-    if node.value==None:
-        node.value=[]
-    else:
-        for speaker in node.value:
-            if speaker.category == value.category: #Dos speakers de la misma categoria no pueden dar charla en el mismo horario
-                return 0
-            if value.international and speaker.international: #No puede haber mas de 2 speakers international
-                return 0 
+            if neighbour.hour==value.hour:
+                if neighbour.international==value.international: # 2 speakers internacionales no pueden dar en el mismo horario
+                    return 0
     return 1  
 
 def update_list_Nodes(node, list_Nodes):
@@ -104,7 +124,7 @@ def backTrack(list_Nodes,weight,list_dominios):
     for v in node_to_assign_value.dominio:
         if verify_restrictions(node_to_assign_value,v)==0 :# Es Invalido no cumple las resctricciones
             continue
-        node_to_assign_value=forward_checking(node_to_assign_value,v)  #Actualizo su dominio
+        node_to_assign_value=forward_checking(node_to_assign_value,v,list_dominios)  #Actualizo su dominio
         #list_Nodes=update_list_Nodes(node_to_assign_value,list_Nodes) #Actualizo la lista de nodos
         backTrack(list_Nodes,weight,list_dominios)  #llamda recursiva`
 
@@ -135,9 +155,9 @@ def generate_list_Nodes(list_dominios):
             list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*3+3)+18*j])
             list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*3+4)+18*j])
             list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*3+5)+18*j])
-            list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*0)+18*j])
-            list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*0+1)+18*j])
-            list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*0+2)+18*j])
+            list_Nodes[(i*3+3)+18*j].set_neighbours(list_Nodes[(i*3)+18*j])
+            list_Nodes[(i*3+4)+18*j].set_neighbours(list_Nodes[(i*3+1)+18*j])
+            list_Nodes[(i*3+5)+18*j].set_neighbours(list_Nodes[(i*3+2)+18*j])
     return list_Nodes
 
 def generate_list_domains():
@@ -159,7 +179,7 @@ def dummy_speakers():
     #NOMBRE,ES INTERNACIONAL, CATEGORIA, CANTIDAD_CHARLAS, HORAS DE PREFERENCIA( X CHARLA), DIAS DE PREFERENCIA (X CHARLA)
     list_speakers.append(Speakers("Jorge",True,"Informatic Security",2,[1,2],[8,10]))
     list_speakers.append(Speakers("Ivan",False,"Software Enginering",3,[2,0,8],[15,17,9]))
-    list_speakers.append(Speakers("Jorge",True,"Informatic Security",1,[1],[8]))
+    list_speakers.append(Speakers("Jorges Cre",True,"Informatic Security",1,[1],[8]))
     return list_speakers
 
 def redifined_domain(list_speakers):
@@ -176,7 +196,7 @@ def main():
     list_dominios=redifined_domain(list_dominios)
     list_Nodes=generate_list_Nodes(list_dominios)
     w=1
-    backTrack(list_Nodes,w,list_dominios)
+    print(backTrack(list_Nodes,w,list_dominios))
     
 
 

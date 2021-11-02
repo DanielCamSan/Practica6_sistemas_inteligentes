@@ -35,7 +35,7 @@ I start defining the classes (it can see it in /images/Class_diagram), the nodes
         • The schedules can be without a speaker, this depends in the quantity of speakers
 Then after redined all the definitions i start to change my code to this new version that i'm sure that will work, in order to do that i made my new class diagram (/images/redifined_class_diagram).
 
-I start to make my automated domain generator, to make it easy the test. Is really important understand that i will going to have a domain of speakers with only a conference, but can appear up to 5 times in it
+I start to make my automated domain generator, to make it easy the test. Is really important understand that i will going to have a domain of speakers with only a conference, but can appear up to 5 times in it, once i made that i generate my list of nodes(variables), i give all them a value in his day and hour, and make the relations beetwen his neighbours. Then i implement the backtrack alforithm
 
 ## 3. Experiments & Results
 
