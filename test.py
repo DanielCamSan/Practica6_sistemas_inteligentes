@@ -1,2 +1,7 @@
-for i in range (5):
-    print(i)
+import heapq
+
+lista=[8,90,15]
+
+heapq.heappush(lista,35)
+
+print(lista)

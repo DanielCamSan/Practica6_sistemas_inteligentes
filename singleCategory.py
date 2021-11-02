@@ -1,26 +1,36 @@
 import heapq
 import copy
+import random
 class Node:
-    def __init__(self,list_dominios):
+    def __init__(self,list_dominios,day,hour,cat):
         self.dominio = list_dominios
-        self.value=[]
+        self.value=None
         self.conflict_List = []
         self.neighbours=[]
+        self.day=day
+        self.hour=hour
+        self.category=cat
     def set_neighbours(self,node):
         self.neighbours.append(node)
     def __lt__(ob1, ob2):
-        return len(ob1.dominio) < len(ob2.dominio)
+        return ob1.dominio < ob2.dominio
 
 class Speakers:
-    def __init__(self,name,international,category,day,hour):
+    def __init__(self,name,international,category,quantity_conference,day,hour):
         self.name = name
         self.international=international
-        self.quantity_conference=0
+        self.quantity_conference=quantity_conference
         self.category = category
         self.preference_day=day
         self.preference_hour=hour
-    def __lt__(ob1, ob2):        
-        return False
+
+class Speaker:
+    def __init__(self,name,international,category,day,hour):
+        self.name = name
+        self.international=international
+        self.category = category
+        self.day=day
+        self.hour=hour
         
 def change_Dominio(node,value):
     node.dominio=value
@@ -37,12 +47,10 @@ def forward_checking(node, value):
 
 def asignation_complete(list_Nodes,list_dominios):
     ans=True
-    for speaker in list_dominios:
-        if speaker.quantity_conference!=5:
-            ans=False
-            break
+    if len(list_dominios)==0:
+        return True
     for node in list_Nodes:
-       if len(node.value)!=4:
+       if (node.value)!=None:
            ans= ans or False
            break
     return ans
@@ -70,8 +78,6 @@ def least_Contrained_Value(node):
     return newall
 
 def verify_restrictions(node,value):   
-    if value.quantity_conference>=5: #Un speaker puede dar hasta 5 charlas
-        return 0
     for neighbour in node.neighbours:
         if neighbour.value!=None:
             if value in neighbour.value: #Un spekaer no puede tener 2 charlas seguidas
@@ -105,12 +111,33 @@ def backTrack(list_Nodes,weight,list_dominios):
 
 def generate_list_Nodes(list_dominios):
     list_Nodes=[]
-    for i in range (25):
-        list_Nodes.append(Node(list_dominios))
+    for i in range (18*5):
+        day=int(i/18)
+        hour=int((i%18)/3)
+        hour= hour+9 if hour<3 else hour+12
+        if (i%18)%3==0:
+            cat="Informatic Security"
+        elif (i%18)%3==1:
+            cat="Software Enginering"
+        elif (i%18)%3==2:
+            cat="Artificial Intelligence"
+        list_Nodes.append(Node(list_dominios,day,hour,cat))
     for j in range(5):
-        for i in range(4):
-            list_Nodes[i+j*5].set_neighbours(list_Nodes[(i+1)+j*5])
-            list_Nodes[i+1 +j*5].set_neighbours(list_Nodes[i+ j*5])
+        for i in range(5):
+            #mismo horario
+            list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*3+1)+18*j])
+            list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*3+2)+18*j])
+            list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*3)+18*j])
+            list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*3)+18*j])
+            list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*3+1)+18*j])
+            list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*3+2)+18*j])
+            #entre horarios 
+            list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*3+3)+18*j])
+            list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*3+4)+18*j])
+            list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*3+5)+18*j])
+            list_Nodes[(i*3)+18*j].set_neighbours(list_Nodes[(i*0)+18*j])
+            list_Nodes[(i*3+1)+18*j].set_neighbours(list_Nodes[(i*0+1)+18*j])
+            list_Nodes[(i*3+2)+18*j].set_neighbours(list_Nodes[(i*0+2)+18*j])
     return list_Nodes
 
 def generate_list_domains():
@@ -120,24 +147,33 @@ def generate_list_domains():
         name=input("Insert the name of speaker")
         inter=input("Insert if the speakers is International ( Y / N )")
         cat=input("Insert the category of the speaker")
-        day=input("Insert the preference day of the speaker (0-Monday, 1-Tuesday, 3-Wednesday, 4-Thursday, 5-Friday )")
+        day=input("Insert the preference day of the speaker (0-Monday, 1-Tuesday, 2-Wednesday, 3-Thursday, 4-Friday )")
         hour=input("Insert the preference hour of the speaker")
-        list_speakers.append(Speakers(name,(inter=='Y'),cat,day,hour))
+        list_speakers.append(Speaker(name,(inter=='Y'),cat,day,hour))
 
     #- Informatic Security
     #- Software Enginering
     #- Artificial intelligence
 def dummy_speakers():
     list_speakers=[]
-    list_speakers.append(Speakers("Jorge",True,"Informatic Security",3,10))
-    list_speakers.append(Speakers("Ivan",False,"Software Enginering",2,15))
-    list_speakers.append(Speakers("Jorge",True,"Informatic Security",0,17))
+    #NOMBRE,ES INTERNACIONAL, CATEGORIA, CANTIDAD_CHARLAS, HORAS DE PREFERENCIA( X CHARLA), DIAS DE PREFERENCIA (X CHARLA)
+    list_speakers.append(Speakers("Jorge",True,"Informatic Security",2,[1,2],[8,10]))
+    list_speakers.append(Speakers("Ivan",False,"Software Enginering",3,[2,0,8],[15,17,9]))
+    list_speakers.append(Speakers("Jorge",True,"Informatic Security",1,[1],[8]))
     return list_speakers
+
+def redifined_domain(list_speakers):
+    domain=[]
+    for speaker in list_speakers:
+        for i in range(speaker.quantity_conference):
+            domain.append(Speaker(speaker.name,speaker.international,speaker.category,speaker.preference_day[i],speaker.preference_hour[i]))
+    return domain
 # Main Function
 def main():    
    
     #list_dominios=generate_list_domains()
     list_dominios=dummy_speakers()
+    list_dominios=redifined_domain(list_dominios)
     list_Nodes=generate_list_Nodes(list_dominios)
     w=1
     backTrack(list_Nodes,w,list_dominios)
