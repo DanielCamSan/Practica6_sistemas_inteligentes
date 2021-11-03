@@ -64,8 +64,7 @@ def forward_checking(node, value,list_dominios):
     return node
 
 
-def asignation_complete(list_Nodes,list_dominios):
-    
+def asignation_complete(list_Nodes,list_dominios):    
     if len(list_dominios)==0:
         return True
     for node in list_Nodes:
@@ -134,8 +133,7 @@ def backTrack(list_Nodes,weight,list_dominios):
         node_to_assign_value=forward_checking(node_to_assign_value,v,list_dominios)  #Actualizo su dominio
         #list_Nodes=update_list_Nodes(node_to_assign_value,list_Nodes) #Actualizo la lista de nodos
         backTrack(list_Nodes,weight,list_dominios)  #llamda recursiva`
-
-
+    return list_Nodes
 def generate_list_Nodes(list_dominios):
     list_Nodes=[]
     for i in range (18*5):
@@ -204,7 +202,8 @@ def main():
     list_dominios=redifined_domain(list_dominios)
     list_Nodes=generate_list_Nodes(list_dominios)
     w=1
-    backTrack(list_Nodes,w,list_dominios)
+    res=backTrack(list_Nodes,w,list_dominios)
+    print("res")
     
 
 
