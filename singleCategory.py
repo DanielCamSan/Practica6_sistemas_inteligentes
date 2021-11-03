@@ -75,7 +75,7 @@ def asignation_complete(list_Nodes,list_dominios):
 def count_speaker_in_day_hour(node):
     sum=0
     for speaker in node.dominio:
-        if speaker.hour==node.hour and speaker.day==node.day:
+        if speaker.hour==node.hour and speaker.day==node.day and speaker.category==node.category:
             sum=sum+1
     return sum
 
@@ -118,8 +118,6 @@ def verify_restrictions(node,value):
                     return 0
     return 1  
 
-def update_list_Nodes(node, list_Nodes):
-    print("")
 
 
 def backTrack(list_Nodes,weight,list_dominios):
