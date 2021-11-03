@@ -64,6 +64,36 @@ def forward_checking(node, value,list_dominios):
     return node
 
 
+def domain_touched(xi,xj):
+    touched=False
+    for value in xj.neighbours:
+        if 
+
+def arc_consistency(node,value):
+    queue=[]
+
+    nodes_to_delete=[]
+    new_Dominio=copy.deepcopy(node.dominio)
+    for speaker in new_Dominio:
+        if not compare_2_speakers(speaker,value):
+            nodes_to_delete.append(speaker)
+    
+    for i in range(len(nodes_to_delete)):
+        new_Dominio.remove(nodes_to_delete[i])
+    node.dominio=new_Dominio
+
+    for neigh in node.neighbours:
+        if neigh.value!=None:
+            queue.append((node,neigh))
+    while len(queue)!=0:
+        (xi,xj)=queue.pop(0)
+        if domain_touched(xi,xj):
+            if len(xj.dominio)==0:
+                return False
+            for neigh in xj.neighbours:
+                if neigh.value!=None:
+                    queue.append(xj,neigh)
+    return True
 def asignation_complete(list_Nodes,list_dominios):
     
     if len(list_dominios)==0:
