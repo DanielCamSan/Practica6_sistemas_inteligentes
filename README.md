@@ -52,7 +52,7 @@ I iterate each speaker in the sorted list and i check if the possible speaker as
 Finally i call again the backtrak function with the new list of nodes updated and repeat the process
 ## 3. Experiments & Results
 
-
+I start defining the list of the domain with a lot of speakers and then with few speakers, the results are similar, basically depends if the speakers hasnt the same hour, day and category, if it hasnt then the solution is possible
 
 ## 4. Conclusions
 
